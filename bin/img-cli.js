@@ -10,6 +10,8 @@ const sharp = require("sharp");
 
 const PNG = "png";
 
+const version = "1.0.1";
+
 /**
  * 获取文件扩展名
  * @param {*} filename
@@ -57,8 +59,6 @@ const fileImgToBuffer = function(imgSrc, callback) {
             console.error(err);
         });
 };
-
-const version = "1.0.0";
 
 let outHelpInfo = function() {
     console.log("");

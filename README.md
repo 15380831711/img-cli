@@ -23,3 +23,9 @@
 `node .\bin\xa-img.js`
 
 `npm run test`
+
+## sharp官方文档
+
+https://github.com/lovell/sharp
+
+http://sharp.pixelplumbing.com/en/stable/api-resize/

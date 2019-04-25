@@ -10,7 +10,7 @@ const sharp = require("sharp");
 
 const PNG = "png";
 
-const version = "1.0.1";
+const version = "1.0.2";
 
 /**
  * 获取文件扩展名
@@ -63,8 +63,13 @@ const fileImgToBuffer = function(imgSrc, callback) {
 let outHelpInfo = function() {
     console.log("");
     console.log("Example:");
+    console.log("   单张图片变换尺寸：");
+    console.log("   img-cli resize");
+    console.log("   或");
     console.log("   img-cli resize d:/1024.png d:/yilabao/resize.png 512 512");
+    console.log("   生成打包尺寸图片：");
     console.log("   img-cli xpack d:/logo.png d:/LaunchImage.png d:/yilabao/");
+    console.log("   查看版本帮助信息：");
     console.log("   img-cli -v");
     console.log("   img-cli -h");
     console.log("");

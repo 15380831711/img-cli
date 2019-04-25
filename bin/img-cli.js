@@ -13,6 +13,26 @@ const PNG = "png";
 const version = "1.0.3";
 
 /**
+ * copy图片
+ * @param {*} splashLogoSrc
+ * @param {*} newPicPath
+ */
+const copyImg = function(splashLogoSrc, newPicPath) {
+    fs.readFile(splashLogoSrc, (err, originBuffer) => {
+        if (err) {
+            console.log("文件读取失败：" + splashLogoSrc);
+            return;
+        }
+        fs.writeFile(newPicPath, originBuffer, error => {
+            if (error) {
+                console.log("文件写入失败：" + newPicPath);
+                return;
+            }
+        });
+    });
+};
+
+/**
  * 获取文件扩展名
  * @param {*} filename
  */
@@ -193,8 +213,11 @@ program
                 });
                 //生成安卓mipmap-xxhdpi/splash_logo.png  500*150  临时图片
                 newPicPath = androidPics + "mipmap-xxhdpi/splash_logo.png";
-                resizeToFileImg(data, newPicPath, 500, 150);
-                console.log("启动logo注意重新切图：" + newPicPath);
+                // resizeToFileImg(data, newPicPath, 500, 150);
+                //拷贝splash_logo.png到安卓图片目录
+                let splashLogoSrc = "assets/imgs/splash_logo.png";
+                copyImg(splashLogoSrc, newPicPath);
+                console.log("启动logo注意重新切图并替换：" + newPicPath);
             });
         } else {
             console.log("源文件不存：" + srcLogoImage);

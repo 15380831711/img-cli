@@ -35,7 +35,7 @@ const resizeToFileImg = function(inputBuffer, path, width, height) {
         .toFile(path, (err, info) => {
             err && console.error(err);
             if (fs.existsSync(path)) {
-                console.log("文件已生成：" + path);
+                console.log("文件已生成,请检查裁剪出的新图清晰度和完整性：" + path);
             } else {
                 console.log("文件未生成：" + path);
             }

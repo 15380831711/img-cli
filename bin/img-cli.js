@@ -2,7 +2,7 @@
 
 const fs = require("fs");
 
-const path = require("path");
+// const path = require("path");
 
 const program = require("commander");
 
@@ -12,10 +12,10 @@ const sharp = require("sharp");
 
 const PNG = "png";
 
-const version = "1.0.4";
+const version = "1.0.5";
 
-//当前文件所在目录的绝对路径
-const absolutePath = path.resolve("./") + "/";
+//img-cli所在目录的绝对路径
+const absolutePath = __dirname + "/../";
 
 /**
  * copy图片
@@ -173,31 +173,37 @@ program
             console.log("只支持PNG格式图片。");
             return;
         }
-        if (outDir && outDir.lastIndexOf("/") != outDir.length - 1 && outDir.lastIndexOf("\\") != outDir.length - 1) {
-            outDir += "/";
-        }
-        //生成安卓苹果打包图片存放目录
-        let androidPics = outDir + "android_pics/";
-        let iosPics = outDir + "ios_pics/";
-        let dirs = [
-            outDir,
-            iosPics,
-            androidPics,
-            androidPics + "mipmap-mdpi/",
-            androidPics + "mipmap-hdpi/",
-            androidPics + "mipmap-xhdpi/",
-            androidPics + "mipmap-xxhdpi/",
-            androidPics + "mipmap-xxxhdpi/"
-        ];
-        dirs.forEach(dir => {
-            if (!fs.existsSync(dir)) {
-                fs.mkdirSync(dir);
-            }
-            console.log(dir);
-        });
 
         //生成安卓苹果logo
         if (fs.existsSync(srcLogoImage)) {
+            if (
+                outDir &&
+                outDir.lastIndexOf("/") != outDir.length - 1 &&
+                outDir.lastIndexOf("\\") != outDir.length - 1
+            ) {
+                outDir += "/";
+            }
+
+            //生成安卓苹果打包图片存放目录
+            let androidPics = outDir + "android_pics/";
+            let iosPics = outDir + "ios_pics/";
+            let dirs = [
+                outDir,
+                iosPics,
+                androidPics,
+                androidPics + "mipmap-mdpi/",
+                androidPics + "mipmap-hdpi/",
+                androidPics + "mipmap-xhdpi/",
+                androidPics + "mipmap-xxhdpi/",
+                androidPics + "mipmap-xxxhdpi/"
+            ];
+            dirs.forEach(dir => {
+                if (!fs.existsSync(dir)) {
+                    fs.mkdirSync(dir);
+                }
+                console.log(dir);
+            });
+
             fileImgToBuffer(srcLogoImage, data => {
                 let iOSLogoSizes = [40, 57, 58, 60, 80, 87, 120, 180, 512, 1024];
                 let androidLogoSizes = [
@@ -230,7 +236,7 @@ program
                 console.log("启动logo注意重新切图并替换：" + newPicPath);
             });
         } else {
-            console.log("源文件不存：" + srcLogoImage);
+            console.log("源图片不存：" + srcLogoImage);
         }
     })
     .on("--help", function() {

@@ -2,6 +2,8 @@
 
 const fs = require("fs");
 
+const path = require("path");
+
 const program = require("commander");
 
 const inquirer = require("inquirer");
@@ -10,7 +12,10 @@ const sharp = require("sharp");
 
 const PNG = "png";
 
-const version = "1.0.3";
+const version = "1.0.4";
+
+//当前文件所在目录的绝对路径
+const absolutePath = path.resolve("./") + "/";
 
 /**
  * copy图片
@@ -47,7 +52,7 @@ const getFileSuffix = function(filename) {
  */
 const resizeToFileImg = function(inputBuffer, path, width, height) {
     if (fs.existsSync(path)) {
-        console.error("文件已存在：" + path);
+        console.error("图片已存在：" + path);
         return;
     }
     sharp(inputBuffer)
@@ -55,9 +60,9 @@ const resizeToFileImg = function(inputBuffer, path, width, height) {
         .toFile(path, (err, info) => {
             err && console.error(err);
             if (fs.existsSync(path)) {
-                console.log("文件已生成，请检查裁剪出的新图清晰度和完整性：" + path);
+                console.log("图片已生成，请检查裁剪出的新图清晰度和完整性：" + path);
             } else {
-                console.log("文件未生成：" + path);
+                console.log("图片未生成：" + path);
             }
         });
 };
@@ -92,7 +97,7 @@ let outHelpInfo = function() {
     console.log("");
     console.log("   生成打包尺寸图片（注意logo图路径在前）：");
     console.log("");
-    console.log("   img-cli xpack d:/logo.png d:/LaunchImage.png d:/yilabao/");
+    console.log("   img-cli xpack d:/logo.png d:/yilabao/");
     console.log("");
     console.log("   查看版本帮助信息：");
     console.log("   img-cli -v");
@@ -160,11 +165,11 @@ program
 
 //新建一个xpack命令，用于生成夏恒内部xpack打包图片！
 program
-    .command("xpack <srcLogoImage> <srcLaunchImage> <outDir>")
+    .command("xpack <srcLogoImage> <outDir>")
     .alias("xp")
     .description("生成新打包图片")
-    .action((srcLogoImage, srcLaunchImage, outDir) => {
-        if (!(getFileSuffix(srcLogoImage) == PNG && getFileSuffix(srcLaunchImage) == PNG)) {
+    .action((srcLogoImage, outDir) => {
+        if (!(getFileSuffix(srcLogoImage) == PNG)) {
             console.log("只支持PNG格式图片。");
             return;
         }
@@ -206,6 +211,10 @@ program
                 iOSLogoSizes.forEach((size, index) => {
                     newPicPath = iosPics + size + "." + PNG;
                     resizeToFileImg(data, newPicPath, size, size);
+                    if (size == 120) {
+                        newPicPath = iosPics + "120-1." + PNG;
+                        resizeToFileImg(data, newPicPath, size, size);
+                    }
                 });
                 androidLogoSizes.forEach((size, index) => {
                     newPicPath = androidPics + size.path + "icon_logo.png";
@@ -215,40 +224,19 @@ program
                 newPicPath = androidPics + "mipmap-xxhdpi/splash_logo.png";
                 // resizeToFileImg(data, newPicPath, 500, 150);
                 //拷贝splash_logo.png到安卓图片目录
-                let splashLogoSrc = "assets/imgs/splash_logo.png";
+                let splashLogoSrc = absolutePath + "assets/imgs/splash_logo.png";
                 copyImg(splashLogoSrc, newPicPath);
+                copyImg(splashLogoSrc, iosPics + "splash_logo.png");
                 console.log("启动logo注意重新切图并替换：" + newPicPath);
             });
         } else {
             console.log("源文件不存：" + srcLogoImage);
         }
-
-        if (fs.existsSync(srcLaunchImage)) {
-            //生成iOS启动图
-            fileImgToBuffer(srcLaunchImage, data => {
-                let iOSLaunchImageSizes = [
-                    { width: 640, height: 960 },
-                    { width: 640, height: 1136 },
-                    { width: 750, height: 1334 },
-                    { width: 828, height: 1792 },
-                    { width: 1125, height: 2436 },
-                    { width: 1242, height: 2208 },
-                    { width: 1242, height: 2688 }
-                ];
-                let newPicPath;
-                iOSLaunchImageSizes.forEach((size, index) => {
-                    newPicPath = iosPics + "LaunchImage" + size.width + "-" + size.height + "." + PNG;
-                    resizeToFileImg(data, newPicPath, size.width, size.height);
-                });
-            });
-        } else {
-            console.log("源文件不存：" + srcLaunchImage);
-        }
     })
     .on("--help", function() {
         console.log("");
         console.log("Examples:");
-        console.log(" img-cli xpack d:/logo.png d:/LaunchImage.png d:/yilabao/");
+        console.log(" img-cli xpack d:/logo.png d:/yilabao/");
     });
 
 program.parse(process.argv);
